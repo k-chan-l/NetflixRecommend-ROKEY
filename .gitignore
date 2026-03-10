@@ -162,4 +162,4 @@ cython_debug/
 # Flet
 storage/
 
-.src/assets/netflix_poster_img_png
+src/assets/netfilx_poster_img_png
