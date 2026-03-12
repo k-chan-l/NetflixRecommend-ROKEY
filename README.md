@@ -1,69 +1,316 @@
-# NetflixrecommendRokey app
+# **NetflixRecommendRokey**
 
-## Run the app
+Netflix 콘텐츠 데이터를 기반으로 영화 및 시리즈 정보를 조회할 수 있는 **Python GUI 기반 추천 앱**입니다. \
+Rokey 부트캠프 Python 심화 과정에서 **데이터 처리, SQLite DB 활용, GUI 애플리케이션 개발**을 연습하기 위해 제작한 프로젝트입니다.
 
-### uv
 
-Run as a desktop app:
+---
 
-```bash
-uv run flet run
+
+# **프로젝트 개요**
+
+Netflix 콘텐츠 데이터를 활용하여 제목, 장르, 평점, 개봉 연도 등의 조건으로 콘텐츠를 검색하고 조회할 수 있는 애플리케이션입니다.
+
+Python 기반 GUI 프레임워크 **Flet**을 사용하여 인터페이스를 구성하고, \
+**Pandas**로 데이터를 전처리한 뒤 **SQLite** 데이터베이스에 저장하여 조회하도록 구현했습니다.
+
+
+---
+
+
+# **주요 기능**
+
+
+
+* 영화 / 시리즈 콘텐츠 검색
+* 제목 기반 콘텐츠 조회
+* 장르 기반 필터링
+* 평점 기준 검색
+* 개봉 연도 기준 검색
+* SQLite 데이터베이스 기반 콘텐츠 조회
+
+
+---
+
+
+# **실행 방법**
+
+
+### **1. 저장소 클론**
+
+
+```
+git clone https://github.com/your-id/NetflixRecommendRokey.git
+cd NetflixRecommendRokey
 ```
 
-Run as a web app:
 
-```bash
-uv run flet run --web
+
+### **2. 가상환경 생성**
+
+
+```
+python -m venv venv
 ```
 
-For more details on running the app, refer to the [Getting Started Guide](https://docs.flet.dev/).
 
-## Build the app
 
-### Android
+### **3. 가상환경 활성화**
 
-```bash
-flet build apk -v
+Linux / Mac
+
+
+```
+source venv/bin/activate
 ```
 
-For more details on building and signing `.apk` or `.aab`, refer to the [Android Packaging Guide](https://docs.flet.dev/publish/android/).
 
-### iOS
+Windows
 
-```bash
-flet build ipa -v
+
+```
+venv\Scripts\activate
 ```
 
-For more details on building and signing `.ipa`, refer to the [iOS Packaging Guide](https://docs.flet.dev/publish/ios/).
 
-### macOS
 
-```bash
-flet build macos -v
+### **4. 패키지 설치**
+
+
+```
+pip install -r requirements.txt
 ```
 
-For more details on building macOS package, refer to the [macOS Packaging Guide](https://docs.flet.dev/publish/macos/).
 
-### Linux
 
-```bash
-flet build linux -v
+### **5. 실행**
+
+
+```
+flet run
 ```
 
-For more details on building Linux package, refer to the [Linux Packaging Guide](https://docs.flet.dev/publish/linux/).
 
-### Windows
 
-```bash
-flet build windows -v
-```
+---
 
-For more details on building Windows package, refer to the [Windows Packaging Guide](https://docs.flet.dev/publish/windows/).
 
-### Web
+# **사용 기술**
 
-```bash
-flet build web -v
-```
 
-For more details on building Web app, refer to the [Web Packaging Guide](https://docs.flet.dev/publish/web/).
+### **Language**
+
+
+
+* Python
+
+
+### **UI**
+
+
+
+* Flet
+
+
+### **Data Processing**
+
+
+
+* Pandas
+
+
+### **Database**
+
+
+
+* SQLite
+
+
+---
+
+
+# **데이터 출처**
+
+Netflix 콘텐츠 데이터는 아래 Kaggle 데이터셋을 사용했습니다.
+
+Kaggle Netflix Dataset \
+[https://www.kaggle.com/](https://www.kaggle.com/)
+
+데이터는 Pandas를 이용해 전처리 후 SQLite 데이터베이스에 저장하여 사용했습니다.
+
+
+---
+
+
+# **프로젝트 구조**
+
+NetflixRecommendRokey/
+
+│
+
+└─ src/
+
+├─ assets/
+
+│ ├─ netflix_poster_img_png/
+
+│ ├─ data.db
+
+│ ├─ icon.png
+
+│ ├─ netflix_korea_popular_35.csv
+
+│ ├─ netflix_korea_popular_35_prep.csv
+
+│ ├─ netflix_titles.csv
+
+│ └─ splash_android.png
+
+│
+
+├─ db.py
+
+├─ main.py
+
+├─ requirements.txt
+
+└─ README.md
+
+
+---
+
+
+# **데이터베이스 구조**
+
+프로젝트에서는 다음과 같은 테이블 구조를 사용했습니다.
+
+
+### **netflix**
+
+
+<table>
+  <tr>
+   <td><strong>column</strong>
+   </td>
+   <td><strong>description</strong>
+   </td>
+  </tr>
+  <tr>
+   <td>movie_id
+   </td>
+   <td>콘텐츠 ID
+   </td>
+  </tr>
+  <tr>
+   <td>title
+   </td>
+   <td>작품 제목
+   </td>
+  </tr>
+  <tr>
+   <td>type
+   </td>
+   <td>영화 / 시리즈
+   </td>
+  </tr>
+  <tr>
+   <td>imdb_rating
+   </td>
+   <td>평점
+   </td>
+  </tr>
+  <tr>
+   <td>description
+   </td>
+   <td>작품 설명
+   </td>
+  </tr>
+  <tr>
+   <td>release_year
+   </td>
+   <td>개봉 연도
+   </td>
+  </tr>
+  <tr>
+   <td>image_path
+   </td>
+   <td>이미지 경로
+   </td>
+  </tr>
+</table>
+
+
+
+### **genre**
+
+
+<table>
+  <tr>
+   <td><strong>column</strong>
+   </td>
+   <td><strong>description</strong>
+   </td>
+  </tr>
+  <tr>
+   <td>genre_id
+   </td>
+   <td>장르 ID
+   </td>
+  </tr>
+  <tr>
+   <td>genre
+   </td>
+   <td>장르 이름
+   </td>
+  </tr>
+</table>
+
+
+
+### **netflix_genre**
+
+
+<table>
+  <tr>
+   <td><strong>column</strong>
+   </td>
+   <td><strong>description</strong>
+   </td>
+  </tr>
+  <tr>
+   <td>movie_id
+   </td>
+   <td>콘텐츠 ID
+   </td>
+  </tr>
+  <tr>
+   <td>genre_id
+   </td>
+   <td>장르 ID
+   </td>
+  </tr>
+</table>
+
+
+
+---
+
+
+# **개발 목적**
+
+이 프로젝트를 통해 다음 내용을 학습하는 것을 목표로 했습니다.
+
+
+
+* Flet을 이용한 Python GUI 애플리케이션 개발
+* Pandas를 활용한 데이터 전처리
+* SQLite 기반 데이터 관리
+* SQL 쿼리를 이용한 조건 검색 기능 구현
+
+
+---
+
+
+# **License**
+
+This project is for educational purposes.
