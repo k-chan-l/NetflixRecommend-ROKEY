@@ -7,6 +7,7 @@ DATA_DB_PATH = "src/assets/data.db"
 init_db()
 make_db()
 
+
 # genre 목록 가져오는 함수
 def load_genres(conn):
     cur = conn.cursor()
@@ -19,8 +20,12 @@ def load_genres(conn):
 
 
 def main(page: ft.Page):
-
     page.title = "Netflix Recommend"
+
+    # 페이지 전체 테마를 다크 모드로 변경 # custom_ui
+    page.theme_mode = ft.ThemeMode.DARK
+    page.bgcolor = ft.Colors.BLACK
+
     page.horizontal_alignment = ft.CrossAxisAlignment.CENTER
     page.scroll = ft.ScrollMode.AUTO
 
@@ -31,134 +36,183 @@ def main(page: ft.Page):
     # 검색 옵션
     title_field = ft.TextField(label="Title", width=180)
 
-    rating_field = ft.TextField(
-        label="Rating ≥",
-        width=120
-    )
+    rating_field = ft.TextField(label="Rating ≥", width=120)
 
-    year_field = ft.TextField(
-        label="Year",
-        width=120
-    )
+    year_field = ft.TextField(label="Year", width=120)
 
+    # 드롭 다운 기본 값을 All로 지정 # custom_ui
+    # 아무것도 선택하지 않으면 전체 검색이 되도록
     type_dropdown = ft.Dropdown(
         label="Type",
         width=150,
+        value="All",
         options=[
             ft.dropdown.Option("All"),
             ft.dropdown.Option("Movie"),
-            ft.dropdown.Option("TV Show")
-        ]
+            ft.dropdown.Option("TV Show"),
+        ],
     )
 
     genre_dropdown = ft.Dropdown(
         label="Genre",
         width=160,
-        options=[ft.dropdown.Option(genre) for genre in genres]
+        value="All",
+        options=[ft.dropdown.Option(genre) for genre in genres],
     )
 
-    # 포스터 Grid
-    grid = ft.GridView(
-        expand=True,
-        spacing=10,
-        run_spacing=10,
-        max_extent=200
-    )
+    # 오류 메시지 출력을 위한 텍스트 추가 # custom_ui
+    message_text = ft.Text("", color=ft.Colors.RED_300)
 
+    # 포스터 Grid 살짝 증가 # custom_ui
+    grid = ft.GridView(expand=True, spacing=15, run_spacing=15, max_extent=220)
 
-    # 첫 화면 (Top 5)
+    # 첫 화면 (Top 5) Top Rated 제목 아래 설명 문구 추가 # custom_ui
     top_column = ft.Column(
         alignment=ft.MainAxisAlignment.START,
         horizontal_alignment=ft.CrossAxisAlignment.CENTER,
         spacing=30,
-        controls = [ft.Text("Top Rated",
-                            size=40,
-                            weight=ft.FontWeight.BOLD)]
+        controls=[
+            ft.Text(
+                "Top Rated", size=40, weight=ft.FontWeight.BOLD, color=ft.Colors.WHITE
+            ),
+            ft.Text("평점이 높은 넷플릭스 콘텐츠", size=16, color=ft.Colors.GREY_400),
+        ],
     )
 
     result = search_db(conn, {"rating": 0, "ascending": False})
-    print(len(result))
 
-    
     for movie in result[:5]:
-
+        # Top 5 카드에 배경색, 여백, 글자색 추가 # custom_ui
         top_column.controls.append(
-
             ft.Container(
+                bgcolor=ft.Colors.GREY_900,
+                padding=15,
+                margin=5,
                 content=ft.Column(
                     [
                         ft.Image(
                             src=movie["image_path"],
                             width=300,
                             height=450,
-                            fit=ft.BoxFit.CONTAIN
+                            fit=ft.BoxFit.CONTAIN,
                         ),
                         ft.Text(
                             movie["title"],
                             size=20,
-                            weight=ft.FontWeight.BOLD
+                            weight=ft.FontWeight.BOLD,
+                            color=ft.Colors.WHITE,
+                            text_align=ft.TextAlign.CENTER,
                         ),
-                        ft.Text(
-                            f"⭐ {movie['rating']}",
-                        )
+                        ft.Text(f"⭐ {movie['rating']}", color=ft.Colors.AMBER),
                     ],
-                    horizontal_alignment=ft.CrossAxisAlignment.CENTER
+                    horizontal_alignment=ft.CrossAxisAlignment.CENTER,
+                    spacing=10,
                 ),
-                padding=10
             )
         )
 
-    # content area (화면 교체용)
-    content_area = ft.Container(
-        content=top_column
-    )
+    # content area (화면 교체용) padding 추가 # custom_ui
+    content_area = ft.Container(content=top_column, padding=10)
 
-    # 검색 함수
+    # 검색 함수에 숫자 입력 예외 처리 추가 # custom_ui
     def search(e):
-
         options = {}
+        message_text.value = ""
 
-        if title_field.value:
-            options["title"] = title_field.value
+        try:
+            if title_field.value:
+                options["title"] = title_field.value
 
-        if type_dropdown.value and type_dropdown.value != "All":
-            options["type"] = type_dropdown.value
+            if type_dropdown.value and type_dropdown.value != "All":
+                options["type"] = type_dropdown.value
 
-        if rating_field.value:
-            options["rating"] = float(rating_field.value)
+            if rating_field.value:
+                options["rating"] = float(rating_field.value)
 
-        if year_field.value:
-            options["release_year"] = int(year_field.value)
+            if year_field.value:
+                options["release_year"] = int(year_field.value)
 
-        if genre_dropdown.value and genre_dropdown.value != "All":
-            options["genre"] = genre_dropdown.value
+            if genre_dropdown.value and genre_dropdown.value != "All":
+                options["genre"] = genre_dropdown.value
+
+        except ValueError:
+            message_text.value = "Rating은 숫자, Year는 정수로 입력해주세요."
+            page.update()
+            return
 
         result = search_db(conn, options)
 
         grid.controls.clear()
 
-        for movie in result:
+        if len(result) == 0:
             grid.controls.append(
                 ft.Container(
-                    content=ft.Image(
-                        src=movie["image_path"],
-                        width=200,
-                        height=500,
-                        fit=ft.BoxFit.COVER
+                    padding=20,
+                    content=ft.Text(
+                        "검색 결과가 없습니다.", size=18, color=ft.Colors.GREY_400
                     ),
-                    padding=5
                 )
             )
-
-        content_area.content = grid
+        else:
+            # 검색 결과 카드에 제목/평점 표시 추가 # custom_ui
+            for movie in result:
+                grid.controls.append(
+                    ft.Container(
+                        bgcolor=ft.Colors.GREY_900,
+                        padding=8,
+                        content=ft.Column(
+                            [
+                                ft.Image(
+                                    src=movie["image_path"],
+                                    width=180,
+                                    height=270,
+                                    fit=ft.BoxFit.COVER,
+                                ),
+                                ft.Text(
+                                    movie["title"],
+                                    size=14,
+                                    weight=ft.FontWeight.BOLD,
+                                    color=ft.Colors.WHITE,
+                                    text_align=ft.TextAlign.CENTER,
+                                ),
+                                ft.Text(
+                                    f"⭐ {movie['rating']}",
+                                    size=12,
+                                    color=ft.Colors.AMBER,
+                                ),
+                            ],
+                            horizontal_alignment=ft.CrossAxisAlignment.CENTER,
+                            spacing=6,
+                        ),
+                    )
+                )
+        # 검색 결과 화면에 제목 추가 # custom_ui
+        content_area.content = ft.Column(
+            [
+                ft.Text(
+                    "Search Results",
+                    size=32,
+                    weight=ft.FontWeight.BOLD,
+                    color=ft.Colors.WHITE,
+                ),
+                grid,
+            ],
+            horizontal_alignment=ft.CrossAxisAlignment.CENTER,
+            spacing=20,
+        )
 
         page.update()
 
-    search_button = ft.Button(
-        content="Search",
-        icon=ft.Icons.SEARCH,
-        on_click=search
-    )
+    # Home 버튼 추가 # custom_ui
+    def show_home(e):
+        content_area.content = top_column
+        message_text.value = ""
+        page.update()
+
+    search_button = ft.Button(content="Search", icon=ft.Icons.SEARCH, on_click=search)
+
+    # Home 버튼 추가 # custom_ui
+    home_button = ft.Button(content="Home", icon=ft.Icons.HOME, on_click=show_home)
 
     # 가로 중앙정렬 옵션 Row
     search_row = ft.Container(
@@ -169,26 +223,25 @@ def main(page: ft.Page):
                 rating_field,
                 year_field,
                 genre_dropdown,
-                search_button
+                search_button,
+                home_button,
             ],
             alignment=ft.MainAxisAlignment.CENTER,
             vertical_alignment=ft.CrossAxisAlignment.CENTER,
-            spacing=15
+            spacing=15,
         ),
-        margin=10
+        margin=10,
     )
 
     page.appbar = ft.AppBar(
         title=ft.Text("Netflix Contents Recommend"),
         bgcolor=ft.Colors.SURFACE_CONTAINER,
         actions=[search_row],
-        toolbar_height=90
+        toolbar_height=90,
     )
 
-    page.add(
-        ft.Container(height=30),
-        content_area
-    )
+    # 페이지에 message_text 표시 추가
+    page.add(ft.Container(height=30), message_text, content_area)
 
 
 ft.run(main)
