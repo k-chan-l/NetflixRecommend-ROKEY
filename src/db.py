@@ -106,8 +106,6 @@ def search_db(conn:sqlite3.Connection, options:dict=None) -> list:
         title            : str   | None # 검색할 제목
         type             : str   | None # 검색할 타입
         rating           : float | None # 기준 별점
-        rating_ascending : bool  | True 
-        # 별점 기준 정렬 방향 | 기본 : 오름차순
         release_year     : int   | None # 출시 연도
         genre            : str   | None # 장르
         ascending        : bool  | True # 정렬 | 기본 : 오름차순
@@ -150,10 +148,7 @@ def search_db(conn:sqlite3.Connection, options:dict=None) -> list:
         params.append(options['type'])
 
     if options and 'rating' in options:
-        if 'rating_ascending' not in options or options['rating_ascending'] == True:
-            query += " AND imdb_rating >= ? "
-        else :
-            query += " AND imdb_rating <= ? "
+        query += " AND imdb_rating >= ? "
         params.append(options['rating'])
     
     if options and 'release_year' in options:
@@ -179,11 +174,11 @@ def search_db(conn:sqlite3.Connection, options:dict=None) -> list:
     if options and 'ascending' in options:
         if options['ascending'] :
             query += '''
-            ORDER BY n.movie_id ASC
+            ORDER BY imdb_rating ASC
             '''
         else :
             query += '''
-                ORDER BY n.movie_id DESC
+                ORDER BY imdb_rating DESC
             '''
     else :
         query += '''
@@ -222,19 +217,16 @@ def test():
     data = search_db(db, {'rating':8.8})
     print(data)
 
-    data = search_db(db, {'rating':9.0, 'rating_ascending': False})
-    print(data)
-
     data = search_db(db, {'release_year':2017})
     print(data)
 
     data = search_db(db, {'genre':'Dramas'})
     print(data)
 
-    data = search_db(db, {'title':'Game', 'rating':8.0, 'rating_ascending':False, 'release_year':2021, 'genre':'TV Dramas'})
+    data = search_db(db, {'title':'Game', 'rating':8.0, 'release_year':2021, 'genre':'TV Dramas'})
     print(data)
     
-    data = search_db(db, {'ascending' : True})
+    data = search_db(db, {'ascending' : False})
     print(data)
 
     db.close()
