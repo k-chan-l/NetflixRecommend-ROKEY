@@ -147,19 +147,33 @@ Kaggle Netflix Dataset \
 NetflixRecommendRokey/
 
 │
+
 └─ src/
+
 ├─ assets/
+
 │ ├─ netflix_poster_img_png/
+
 │ ├─ data.db
+
 │ ├─ icon.png
+
 │ ├─ netflix_korea_popular_35.csv
+
 │ ├─ netflix_korea_popular_35_prep.csv
+
 │ ├─ netflix_titles.csv
+
 │ └─ splash_android.png
+
 │
+
 ├─ db.py
+
 ├─ main.py
+
 ├─ requirements.txt
+
 └─ README.md
 
 
