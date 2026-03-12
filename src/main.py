@@ -1,9 +1,11 @@
 import flet as ft
 import sqlite3
-from db import search_db
+from db import init_db, make_db, search_db
 
 DATA_DB_PATH = "src/assets/data.db"
 
+init_db()
+make_db()
 
 # genre 목록 가져오는 함수
 def load_genres(conn):
@@ -74,7 +76,8 @@ def main(page: ft.Page):
                             weight=ft.FontWeight.BOLD)]
     )
 
-    result = search_db(conn, {"rating": 10, "rating_ascending": False})
+    result = search_db(conn, {"rating": 0, "ascending": False})
+    print(len(result))
 
     
     for movie in result[:5]:
