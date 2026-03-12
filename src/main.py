@@ -22,7 +22,7 @@ def load_genres(conn):
 def main(page: ft.Page):
     page.title = "Netflix Recommend"
 
-    # 기본 창 크기 설정
+    # 기본 창 크기 설정 # custom_ui
     page.window_width = 1500
     page.window_height = 950
 
