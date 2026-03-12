@@ -174,8 +174,23 @@ def search_db(conn:sqlite3.Connection, options:dict=None) -> list:
 
     query += '''
     GROUP BY n.movie_id, n.title
-    ORDER BY n.movie_id
                 '''
+    
+    if options and 'ascending' in options:
+        if options['ascending'] :
+            query += '''
+            ORDER BY n.movie_id ASC
+            '''
+        else :
+            query += '''
+                ORDER BY n.movie_id DESC
+            '''
+    else :
+        query += '''
+            ORDER BY n.movie_id ASC
+            '''
+    
+
     cur.execute(query, params)
     movies = cur.fetchall()
 
@@ -219,6 +234,9 @@ def test():
     data = search_db(db, {'title':'Game', 'rating':8.0, 'rating_ascending':False, 'release_year':2021, 'genre':'TV Dramas'})
     print(data)
     
+    data = search_db(db, {'ascending' : True})
+    print(data)
+
     db.close()
 
 
