@@ -37,6 +37,64 @@ def main(page: ft.Page):
     conn = sqlite3.connect(DATA_DB_PATH)
     genres = load_genres(conn)
 
+
+    # 작품 상세 페이지 dialog
+    dialog = ft.AlertDialog(title=ft.Text(""))
+    page.overlay.append(dialog)
+
+    # 작품 상세 페이지 팝업 창 띄우기
+    def show_detail(e):
+        movie = e.control.data
+        print("show_detail!")
+
+        dialog.title = ft.Container(
+            # bgcolor=ft.Colors.GREEN_200,
+            content=ft.Row(
+                [
+                    ft.Text(""),  # 보기 좋은 정렬을 위해 추가
+                    ft.Text(
+                        f"      {movie['title']}",  # 보기 좋은 정렬을 위해 공백 추가
+                        size=24,
+                        weight=ft.FontWeight.BOLD,
+                        text_align=ft.TextAlign.CENTER
+                    ),
+                    ft.IconButton(
+                        icon=ft.Icons.CLOSE,
+                        on_click=close_dialog
+                    )
+                ],
+                alignment=ft.MainAxisAlignment.SPACE_BETWEEN
+            )
+        )
+
+        dialog.content = ft.Column(
+                [
+                    ft.Image(src=movie["image_path"], width=270),
+                    ft.Text(f"⭐ {movie['rating']}"),
+                    ft.Text(
+                        f"{movie.get('release_year','')} • {movie.get('type','')}"
+                    ),
+                    ft.Container(
+                        width=450,
+                        content=ft.Text(movie["description"],
+                            text_align=ft.TextAlign.START
+                        )
+                    )
+                ],
+                horizontal_alignment=ft.CrossAxisAlignment.CENTER,
+                spacing=15,
+                tight=True
+            )
+
+        dialog.open = True
+        page.update()
+
+    # 작품 상세 페이지 팝업 창 닫기
+    def close_dialog(e):
+        dialog.open = False
+        page.update()
+
+
     # 검색 옵션
     title_field = ft.TextField(label="Title", width=180)
 
@@ -95,6 +153,8 @@ def main(page: ft.Page):
                 bgcolor=ft.Colors.GREY_900,
                 padding=15,
                 margin=5,
+                data=movie, #상페 페이지에 표시할 정보를 위해 저장
+                on_click=show_detail, # 클릭 시 상세페이지 open
                 content=ft.Column(
                     [
                         ft.Image(
@@ -146,11 +206,13 @@ def main(page: ft.Page):
             message_text.value = "Rating은 숫자, Year는 정수로 입력해주세요."
             page.update()
             return
+        
+        result = search_db(conn, options) # 검색 결과
 
-        result = search_db(conn, options)
+        grid.controls.clear() # grid 안의 내용 초기화
 
-        grid.controls.clear()
 
+        # 검색 결과가 없을 때 해당 메시지를 표시
         if len(result) == 0:
             grid.controls.append(
                 ft.Container(
@@ -170,13 +232,15 @@ def main(page: ft.Page):
                         height=320,
                         bgcolor=ft.Colors.GREY_900,
                         padding=8,
+                        data=movie, # 상세 페이지에 표시할 정보 저장
+                        on_click=show_detail, # 클릭 시 상세 페이지 오픈
                         content=ft.Column(
                             [
                                 ft.Image(
                                     src=movie["image_path"],
                                     width=180,
                                     height=230,
-                                    fit=ft.BoxFit.COVER,
+                                    fit=ft.BoxFit.COVER
                                 ),
                                 ft.Text(
                                     movie["title"],
@@ -244,7 +308,8 @@ def main(page: ft.Page):
     )
 
     page.appbar = ft.AppBar(
-        title=ft.Text("Netflix Contents Recommend"),
+        title=ft.Text("Netflix Contents Recommend",
+                      weight=ft.FontWeight.BOLD),
         bgcolor=ft.Colors.SURFACE_CONTAINER,
         actions=[search_row],
         toolbar_height=90,
