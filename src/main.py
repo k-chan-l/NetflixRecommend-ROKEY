@@ -22,6 +22,10 @@ def load_genres(conn):
 def main(page: ft.Page):
     page.title = "Netflix Recommend"
 
+    # 기본 창 크기 설정
+    page.window_width = 1500
+    page.window_height = 950
+
     # 페이지 전체 테마를 다크 모드로 변경 # custom_ui
     page.theme_mode = ft.ThemeMode.DARK
     page.bgcolor = ft.Colors.BLACK
@@ -64,7 +68,10 @@ def main(page: ft.Page):
     message_text = ft.Text("", color=ft.Colors.RED_300)
 
     # 포스터 Grid 살짝 증가 # custom_ui
-    grid = ft.GridView(expand=True, spacing=15, run_spacing=15, max_extent=220)
+    # 세로형 포스터에 맞게 세로가 긴 Grid로 설정
+    grid = ft.GridView(
+        expand=True, spacing=15, run_spacing=15, max_extent=200, child_aspect_ratio=0.58
+    )
 
     # 첫 화면 (Top 5) Top Rated 제목 아래 설명 문구 추가 # custom_ui
     top_column = ft.Column(
@@ -155,9 +162,12 @@ def main(page: ft.Page):
             )
         else:
             # 검색 결과 카드에 제목/평점 표시 추가 # custom_ui
+            # container 크기 조정 및 이미지 크기 축소
             for movie in result:
                 grid.controls.append(
                     ft.Container(
+                        width=200,
+                        height=320,
                         bgcolor=ft.Colors.GREY_900,
                         padding=8,
                         content=ft.Column(
@@ -165,7 +175,7 @@ def main(page: ft.Page):
                                 ft.Image(
                                     src=movie["image_path"],
                                     width=180,
-                                    height=270,
+                                    height=230,
                                     fit=ft.BoxFit.COVER,
                                 ),
                                 ft.Text(
