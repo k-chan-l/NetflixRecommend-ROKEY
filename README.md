@@ -151,7 +151,7 @@ https://www.kaggle.com/datasets/shivamb/netflix-shows
 ```
 NetflixRecommendRokey/
 │
-└─ src/
+├─ src/
 ├─ assets/
 │ ├─ netflix_poster_img_png/
 │ ├─ data.db
@@ -312,7 +312,7 @@ NetflixRecommendRokey/
 ![Search Screen](./demo/image2.png)
 
 ### Detail Screen
-![Detail Screen](./sdemo/image3.png)
+![Detail Screen](./demo/image3.png)
 
 ---
 # **License**
