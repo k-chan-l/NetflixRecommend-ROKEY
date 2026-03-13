@@ -138,45 +138,38 @@ Kaggle Netflix Dataset \
 
 데이터는 Pandas를 이용해 전처리 후 SQLite 데이터베이스에 저장하여 사용했습니다.
 
+## Dataset
+
+Netflix Movies and TV Shows Dataset  
+Source: Kaggle  
+https://www.kaggle.com/datasets/shivamb/netflix-shows
 
 ---
 
 
 # **프로젝트 구조**
-
+```
 NetflixRecommendRokey/
-
 │
-
 └─ src/
-
 ├─ assets/
-
 │ ├─ netflix_poster_img_png/
-
 │ ├─ data.db
-
 │ ├─ icon.png
-
 │ ├─ netflix_korea_popular_35.csv
-
 │ ├─ netflix_korea_popular_35_prep.csv
-
 │ ├─ netflix_titles.csv
-
 │ └─ splash_android.png
-
+├─ demo/
+│ ├─ image1.png
+│ ├─ image2.png
+│ └─ image3.png
 │
-
 ├─ db.py
-
 ├─ main.py
-
 ├─ requirements.txt
-
 └─ README.md
-
-
+```
 ---
 
 
@@ -310,7 +303,26 @@ NetflixRecommendRokey/
 
 ---
 
+## Demo
 
+### Main Screen
+![Main Screen](./demo/image1.png)
+
+### Search Screen
+![Search Screen](./demo/image2.png)
+
+### Detail Screen
+![Detail Screen](./sdemo/image3.png)
+
+---
 # **License**
 
 This project is for educational purposes.
+
+---
+## Disclaimer
+
+This project is for educational purposes only.
+
+Movie images belong to Netflix and their respective copyright holders.
+They are not included in the repository.
